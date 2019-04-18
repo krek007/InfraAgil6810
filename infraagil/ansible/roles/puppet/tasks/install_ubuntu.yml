@@ -1,0 +1,11 @@
+- name: Instalar puppet-client no ubuntu
+  shell: dpkg -i /tmp/puppet.deb
+  become: true
+  when: ansible_distribution == "Ubuntu"
+
+- name: Instalar Puppet-agent no Ubuntu
+  apt:
+    name: puppet-agent
+    update-cache: yes
+    state: present
+  when: ansible_distribution == "Ubuntu"

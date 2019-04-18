@@ -1,0 +1,60 @@
+---
+- name: Exercicios de aula - Curso 525
+  hosts: all
+  become: yes
+  tasks: 
+  - name: Remover o NGINX
+    yum:
+      name: nginx
+      state: absent
+    when: ansible_distribution|lower == "centos"
+
+  - name: Remover o NGINX
+    apt:
+      name: nginx
+      state: absent
+      update_cache: yes
+    when: ansible_distribution|lower == "ubuntu"
+
+  - name: Instalar o Apache2 e as suas dependências
+    package:
+      name: ['apache2','libapache2-mod-php7.0','php7.0']
+      state: present
+    when: ansible_distribution|lower == "ubuntu"
+
+  - name: Habilitar modulo PHP  
+    apache2_module:
+      name: php7.0
+      state: present
+    notify: apache2
+    when: ansible_distribution|lower == "ubuntu"
+
+  handlers:
+  - name: apache2 
+    systemd:
+      name: apache2
+      state: restarted
+  
+  - name: Instalar HTTPD e as suas depenências
+    yum:
+      name: ['httpd','php']
+      state: present
+    when: ansible_distribution|lower == "centos"  
+    notify: restart
+
+  handlers:
+  - name: restart
+    systemd:
+      name: httph
+      state: restarted
+      
+  - name: Criar arquivo index.php
+    shell: 'touch /var/www/html/index.php'
+
+  - name: Popular o arquivo index.php
+    lineinfile: 
+      path: /var/www/html/index.php
+      create: yes
+      line: '<?php echo "Desafiador!!" ?>' 
+    
+...

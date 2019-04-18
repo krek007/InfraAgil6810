@@ -1,0 +1,22 @@
+---
+- hosts: all
+  become: yes  
+  tasks:
+  - name: Instalando epel-release
+    package: 
+      name: ['epel-release']
+      state: present
+    when: ansible_distribution|lower == 'centos'
+  
+  - name: Instalando pacotes sl e cowsay
+    package:
+      name: ['sl','cowsay']
+      state: present
+  - lineinfile: 
+      state: present
+      path: /root/.bashrc
+      line: '{{item}}'
+    loop: 
+    - 'PATH=$PATH:/usr/games/'
+    - 'alias ls="ls --color"'   
+...
